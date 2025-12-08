@@ -1,0 +1,264 @@
+<?xml version="1.0"?>
+<AlteryxDocument yxmdVer="2023.2" RunE2="T">
+  <Nodes>
+    <Node ToolID="1">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.BrowseV2.BrowseV2">
+        <Position x="666" y="114" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <TempFile>C:\Users\kanal\AppData\Local\Temp\Engine_19388_017dbe97e55f4173aa8a0daa123f335b_\Engine_19388_391b883acf36f2438920097b8535f0d8~.yxdb</TempFile>
+          <TempFileDataProfiling />
+          <Layout>
+            <ViewMode>Single</ViewMode>
+            <ViewSize value="100" />
+            <View1>
+              <DefaultTab>Profile</DefaultTab>
+              <Hints>
+                <Table />
+              </Hints>
+            </View1>
+            <View2 />
+          </Layout>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxBrowseV2" />
+    </Node>
+    <Node ToolID="2">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.DbFileInput.DbFileInput">
+        <Position x="246" y="114" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Passwords />
+          <File RecordLimit="" SearchSubDirs="False" FileFormat="0" OutputFileName="">C:\Users\kanal\Desktop\databi\title.principals.tsv\title.principals.tsv</File>
+          <FormatSpecificOptions>
+            <HeaderRow>True</HeaderRow>
+            <IgnoreErrors>False</IgnoreErrors>
+            <AllowShareWrite>False</AllowShareWrite>
+            <ImportLine>1</ImportLine>
+            <FieldLen>254</FieldLen>
+            <SingleThreadRead>False</SingleThreadRead>
+            <IgnoreQuotes>False</IgnoreQuotes>
+            <Delimeter>\t</Delimeter>
+            <QuoteRecordBreak>False</QuoteRecordBreak>
+            <CodePage>65001</CodePage>
+          </FormatSpecificOptions>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>title.principals.tsv</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+        <Dependencies>
+          <Implicit />
+        </Dependencies>
+        <MetaInfo connection="Output">
+          <RecordInfo>
+            <Field name="tconst" size="254" source="File: C:\Users\kanal\Desktop\databi\title.principals.tsv\title.principals.tsv" type="V_WString" />
+            <Field name="ordering" size="254" source="File: C:\Users\kanal\Desktop\databi\title.principals.tsv\title.principals.tsv" type="V_WString" />
+            <Field name="nconst" size="254" source="File: C:\Users\kanal\Desktop\databi\title.principals.tsv\title.principals.tsv" type="V_WString" />
+            <Field name="category" size="254" source="File: C:\Users\kanal\Desktop\databi\title.principals.tsv\title.principals.tsv" type="V_WString" />
+            <Field name="job" size="254" source="File: C:\Users\kanal\Desktop\databi\title.principals.tsv\title.principals.tsv" type="V_WString" />
+            <Field name="characters" size="254" source="File: C:\Users\kanal\Desktop\databi\title.principals.tsv\title.principals.tsv" type="V_WString" />
+          </RecordInfo>
+        </MetaInfo>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxDbFileInput" />
+    </Node>
+    <Node ToolID="3">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.Formula.Formula">
+        <Position x="438" y="114" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <FormulaFields>
+            <FormulaField expression="RegEx_Replace(Trim([job]), &quot;\\s+&quot;, &quot; &quot;)" field="job" size="300" type="V_WString" />
+            <FormulaField expression="IF [job] = '\N' THEN &quot;UNKNOWN&quot; ELSE [job] ENDIF&#xA;" field="job" size="300" type="V_WString" />
+            <FormulaField expression="IF [characters] = '\N' THEN &quot;UNKNOWN&quot; ELSE [characters] ENDIF&#xA;" field="characters" size="300" type="V_WString" />
+            <FormulaField expression="REGEX_Replace([characters], '[&quot;&quot;]', &quot;&quot;)" field="characters" size="300" type="V_WString" />
+            <FormulaField expression="REGEX_Replace([characters], &quot;[^a-zA-Z0-9 .,'\\\\-]&quot;, &quot;&quot;)" field="characters" size="300" type="V_WString" />
+            <FormulaField expression="IF [characters] = '' THEN &quot;UNKNOWN&quot; ELSE [characters] ENDIF&#xA;" field="characters" size="300" type="V_WString" />
+            <FormulaField expression="IF IsNull([characters]) OR TRIM([characters]) = &quot;&quot; THEN &quot;UNKNOWN&quot; ELSE [characters] ENDIF&#xA;" field="characters" size="300" type="V_WString" />
+            <FormulaField expression="REGEX_Replace([characters], &quot;[\r\n]+&quot;, &quot; &quot;)&#xA;" field="characters" size="300" type="V_WString" />
+            <FormulaField expression="RegEx_Replace(Trim([characters]), &quot;\\s+&quot;, &quot; &quot;)" field="characters" size="300" type="V_WString" />
+            <FormulaField expression="REGEX_Replace([characters], &quot;[\r\n]+&quot;, &quot; &quot;) &#xA;" field="characters" size="300" type="V_WString" />
+            <FormulaField expression="RegEx_Replace(Trim([characters]), &quot;\\s+&quot;, &quot; &quot;)&#xA;" field="characters" size="300" type="V_WString" />
+            <FormulaField expression="REGEX_Replace([characters], '[&quot;]', '&quot;&quot;')&#xA;" field="characters" size="300" type="V_WString" />
+            <FormulaField expression="REGEX_Replace([job], &quot;[\r\n]+&quot;, &quot; &quot;) &#xA;" field="job" size="300" type="V_WString" />
+          </FormulaFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText>job = RegEx_Replace(Trim([job]), "\\s+", " ")
+job = IF [job] = '\N' THEN "UNKNOW...</DefaultAnnotationText>
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxFormula" />
+    </Node>
+    <Node ToolID="4">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.BasicDataProfile.BasicDataProfile">
+        <Position x="594" y="66" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <Limit_UniqueCount>1000000</Limit_UniqueCount>
+          <Limit_UniqueValuesSize>1000</Limit_UniqueValuesSize>
+          <IsMetric value="False" />
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxBasicDataProfile" />
+    </Node>
+    <Node ToolID="5">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.BrowseV2.BrowseV2">
+        <Position x="690" y="54" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <TempFile>C:\Users\kanal\AppData\Local\Temp\Engine_19388_017dbe97e55f4173aa8a0daa123f335b_\Engine_19388_5f9d5930938628458d3567efd163229b~.yxdb</TempFile>
+          <TempFileDataProfiling />
+          <Layout>
+            <ViewMode>Single</ViewMode>
+            <ViewSize value="100" />
+            <View1>
+              <DefaultTab>Profile</DefaultTab>
+              <Hints>
+                <Table />
+              </Hints>
+            </View1>
+            <View2 />
+          </Layout>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxBrowseV2" />
+    </Node>
+    <Node ToolID="6">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.AlteryxSelect.AlteryxSelect">
+        <Position x="342" y="114" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <OrderChanged value="False" />
+          <CommaDecimal value="False" />
+          <SelectFields>
+            <SelectField field="ordering" selected="True" type="Int64" size="8" />
+            <SelectField field="category" selected="True" size="300" />
+            <SelectField field="job" selected="True" size="300" />
+            <SelectField field="characters" selected="True" size="300" />
+            <SelectField field="*Unknown" selected="True" />
+          </SelectFields>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxSelect" />
+    </Node>
+    <Node ToolID="8">
+      <GuiSettings Plugin="AlteryxBasePluginsGui.BrowseV2.BrowseV2">
+        <Position x="426" y="54" />
+      </GuiSettings>
+      <Properties>
+        <Configuration>
+          <TempFile>C:\Users\kanal\AppData\Local\Temp\Engine_19388_017dbe97e55f4173aa8a0daa123f335b_\Engine_19388_f4b9cf788a201e45ad045e528ea5f54d~.yxdb</TempFile>
+        </Configuration>
+        <Annotation DisplayMode="0">
+          <Name />
+          <DefaultAnnotationText />
+          <Left value="False" />
+        </Annotation>
+      </Properties>
+      <EngineSettings EngineDll="AlteryxBasePluginsEngine.dll" EngineDllEntryPoint="AlteryxBrowseV2" />
+    </Node>
+  </Nodes>
+  <Connections>
+    <Connection>
+      <Origin ToolID="2" Connection="Output" />
+      <Destination ToolID="6" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="3" Connection="Output" />
+      <Destination ToolID="4" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="3" Connection="Output" />
+      <Destination ToolID="1" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="4" Connection="Output" />
+      <Destination ToolID="5" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="6" Connection="Output" />
+      <Destination ToolID="3" Connection="Input" />
+    </Connection>
+    <Connection>
+      <Origin ToolID="6" Connection="Output" />
+      <Destination ToolID="8" Connection="Input" />
+    </Connection>
+  </Connections>
+  <Properties>
+    <Memory default="True" />
+    <GlobalRecordLimit value="0" />
+    <TempFiles default="True" />
+    <Annotation on="True" includeToolName="False" />
+    <ConvErrorLimit value="10" />
+    <ConvErrorLimit_Stop value="False" />
+    <CancelOnError value="False" />
+    <DisableBrowse value="False" />
+    <EnablePerformanceProfiling value="False" />
+    <RunWithE2 value="True" />
+    <PredictiveToolsCodePage value="1252" />
+    <DisableAllOutput value="False" />
+    <ShowAllMacroMessages value="False" />
+    <ShowConnectionStatusIsOn value="True" />
+    <ShowConnectionStatusOnlyWhenRunning value="True" />
+    <ZoomLevel value="0" />
+    <LayoutType>Horizontal</LayoutType>
+    <MetaInfo>
+      <NameIsFileName value="True" />
+      <Name>title_principle</Name>
+      <Description />
+      <RootToolName />
+      <ToolVersion />
+      <ToolInDb value="False" />
+      <CategoryName />
+      <SearchTags />
+      <Author />
+      <Company />
+      <Copyright />
+      <DescriptionLink actual="" displayed="" />
+      <Example>
+        <Description />
+        <File />
+      </Example>
+      <WorkflowId value="155cf492-676c-41ae-9f5f-df8397c51f44" />
+      <Telemetry>
+        <PreviousWorkflowId value="fe92233f-548f-4e41-8a80-e0f4661bd3ee" />
+        <OriginWorkflowId value="fe92233f-548f-4e41-8a80-e0f4661bd3ee" />
+      </Telemetry>
+      <PlatformWorkflowId value="" />
+    </MetaInfo>
+    <Events>
+      <Enabled value="True" />
+    </Events>
+  </Properties>
+</AlteryxDocument>
