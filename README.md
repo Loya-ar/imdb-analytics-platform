@@ -4,7 +4,6 @@
 
 This project implements an end-to-end Business Intelligence solution for analyzing IMDb's non-commercial datasets using medallion architecture. The solution processes over 200 million records across 7 source files to create a comprehensive analytical platform for movie and personnel insights.
 
-
 ## 🎯 Business Objectives
 
 The platform enables business analysts to:
@@ -31,7 +30,7 @@ Bronze Layer (Raw) → Silver Layer (Validated) → Gold Layer (Curated)
 | Component | Technology | Purpose |
 |-----------|------------|---------|
 | Data Modeling | ER Studio | Database design and schema modeling |
-| Data Profiling | Alteryx | Data quality analysis and profiling |
+| Data Profiling | Alteryx & DQX | Data quality analysis and profiling |
 | ETL Processing | Databricks | Data transformation and pipeline orchestration |
 | Storage | Delta Live Tables | Data lake storage with ACID compliance |
 | Visualization | Power BI | Interactive dashboards and reporting |
@@ -54,9 +53,10 @@ Bronze Layer (Raw) → Silver Layer (Validated) → Gold Layer (Curated)
 ## 🔄 Data Pipeline
 
 ### 1. Data Profiling Phase
-- Analyze data distributions using Alteryx/YData
+- Analyze data distributions using Alteryx, DQX, and YData
 - Document data quality issues
-- Create data profiling reports
+- Create comprehensive profiling reports
+- Generate data quality metrics
 
 ### 2. Bronze Layer Processing
 - Raw TSV file ingestion
@@ -172,6 +172,7 @@ Bronze Layer (Raw) → Silver Layer (Validated) → Gold Layer (Curated)
 - Databricks workspace access
 - Power BI Desktop/Pro
 - Alteryx Designer (for data profiling)
+- DQX (Data Quality Explorer)
 - ER Studio (for data modeling)
 - Git for version control
 
@@ -227,8 +228,11 @@ imdb-bi-project/
 │   │   └── silver_validation.py
 │   └── gold/
 │       └── gold_transformation.py
-├── alteryx/
-│   └── data_profiling_workflow.yxmd
+├── profiling/
+│   ├── alteryx/
+│   │   └── data_profiling_workflow.yxmd
+│   └── dqx/
+│       └── dqx_quality_reports/
 ├── powerbi/
 │   └── IMDb_Analytics.pbix
 ├── sql/
