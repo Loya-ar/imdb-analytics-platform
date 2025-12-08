@@ -4,9 +4,6 @@
 
 This project implements an end-to-end Business Intelligence solution for analyzing IMDb's non-commercial datasets using medallion architecture. The solution processes over 200 million records across 7 source files to create a comprehensive analytical platform for movie and personnel insights.
 
-**Course:** DAMG 7370 - Designing Advanced Data Architectures for BI  
-**Semester:** Fall 2025  
-**Deadline:** December 2, 2025
 
 ## 🎯 Business Objectives
 
