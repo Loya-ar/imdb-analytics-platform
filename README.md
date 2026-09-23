@@ -1,4 +1,11 @@
-# IMDb Data Analytics Platform - Business Intelligence Implementation
+# IMDb Data Analytics Platform — Business Intelligence Implementation
+
+End-to-end BI solution over IMDb's non-commercial datasets using medallion
+architecture. Processes **200.28M records across 7 source files** into a
+dimensional model serving movie and personnel analytics.
+
+**Course:** DAMG 7370 — Designing Data Architecture for Business Intelligence,
+Northeastern University
 
 ## 📊 Project Overview
 
@@ -80,43 +87,42 @@ Bronze Layer (Raw) → Silver Layer (Validated) → Gold Layer (Curated)
 ## 📊 Data Model
 
 ### Fact Tables (3)
-- `fact_title_ratings` - 1.6M rows
-- `fact_episodes` - 9.3M rows  
-- `fact_title_principals` - 96M rows
+- `fact_title_ratings` — 1.6M rows
+- `fact_episodes` — 9.3M rows
+- `fact_title_principals` — 96M rows
 
 ### Dimension Tables (6)
-- `dim_title` - 12M rows
-- `dim_name` - 14.9M rows
-- `dim_genre` - 28 unique genres
-- `dim_profession` - 46 unique professions
-- `dim_region` - 252 unique regions
-- `dim_language` - 111 unique languages
+- `dim_title` — 12M rows
+- `dim_name` — 14.9M rows
+- `dim_genre` — 28 unique genres
+- `dim_profession` — 46 unique professions
+- `dim_region` — 252 unique regions
+- `dim_language` — 111 unique languages
 
 ### Bridge Tables (3)
-- `bridge_title_genre` - 24M rows
-- `bridge_name_profession` - 35M rows
-- `bridge_title_akas` - 54M rows
+- `bridge_title_genre` — 24M rows
+- `bridge_name_profession` — 35M rows
+- `bridge_title_akas` — 54M rows
 
 ## ✅ Data Quality Standards
 
 ### Validation Rules (60 total)
 - Primary key constraints
-- Date range validations (1800-2030)
+- Date range validations (1800–2030)
 - NULL handling for required fields
-- Format standardization (e.g., tt* prefix for title IDs)
+- Format standardization (e.g., `tt*` prefix for title IDs)
 - Cross-field validations
 - Domain-specific checks (e.g., valid title types)
 
 ### Audit Columns (All Tables)
-- `DI_JOB_ID` - Job identifier for traceability
-- `DI_LOAD_DT` - Load timestamp
-- `_source_file` - Original source file reference
+- `DI_JOB_ID` — Job identifier for traceability
+- `DI_LOAD_DT` — Load timestamp
+- `_source_file` — Original source file reference
 
 ### Quality Metrics
-- **Data Quality Score:** 99.9997%
-- **Total Validations:** 60
-- **Rows Dropped:** 646 (0.0003%)
-- **Drop Reasons:** Invalid dates, NULL primary keys, format violations
+- **Total validations:** 60 rules across the Silver layer
+- **Rows dropped:** 646 of 200,281,566 (0.0003%)
+- **Drop reasons:** Invalid dates, NULL primary keys, format violations
 
 ## 📈 Business Analytics Capabilities
 
@@ -140,107 +146,71 @@ Bronze Layer (Raw) → Silver Layer (Validated) → Gold Layer (Curated)
 
 ## 📊 Power BI Dashboards
 
-### Dashboard Components
-1. **Movie Insights Dashboard**
-   - Release trends by year
-   - Genre distribution analysis
-   - Rating correlations
+Built against the Gold layer via the Databricks connector.
 
-2. **Crew Analytics Dashboard**
-   - Actor performance metrics
-   - Director and writer popularity
-   - Multi-profession analysis
+1. **Movie Insights** — release trends by year, genre distribution, rating correlations
+2. **Crew Analytics** — actor performance, director and writer popularity, multi-profession analysis
+3. **Content Trends** — year-over-year comparisons, movie length analysis, adult vs non-adult
+4. **Regional Analysis** — country distribution, language diversity, regional release patterns
+5. **Series Insights** — season performance, episode count trends, series vs movie comparisons
 
-3. **Content Trends Dashboard**
-   - Year-over-year comparisons
-   - Movie length analysis
-   - Adult vs non-adult content
+## 📂 Repository Contents
 
-4. **Regional Analysis Dashboard**
-   - Country distribution
-   - Language diversity metrics
-   - Regional release patterns
+This repository holds the profiling workflows, pipeline notebooks, mapping
+document, and data model. The Databricks Delta Live Tables pipelines and the
+Power BI report were developed in their respective workspaces and are not
+checked in here.
 
-5. **Series Insights Dashboard**
-   - Season performance analysis
-   - Episode count trends
-   - Series vs movie comparisons
+```
+Final-Project--DAMG7370/
+├── README.md
+├── Main_Pipeline.ipynb            # Bronze → Silver → Gold transformations
+├── Data_Profiling_complete.ipynb  # Profiling and data quality analysis
+├── Final_Mapping_Doc.xlsx         # Source-to-target mapping specification
+├── final_project_team.DM1         # ER Studio data model
+└── Alteryx profiling workflows    # one per source file
+    ├── name_basic.yxmd
+    ├── title_akas.yxmd
+    ├── title_basics_.yxmd
+    ├── title_crew.yxmd
+    ├── title_episode.yxmd
+    ├── title_principle.yxmd
+    └── title_ratings.yxmd
+```
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 - Databricks workspace access
 - Power BI Desktop/Pro
-- Alteryx Designer (for data profiling)
-- DQX (Data Quality Explorer)
-- ER Studio (for data modeling)
-- Git for version control
+- Alteryx Designer (to open the `.yxmd` profiling workflows)
+- ER Studio (to open `final_project_team.DM1`)
 
-### Installation
+### Setup
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/imdb-bi-project.git
-cd imdb-bi-project
+git clone https://github.com/Loya-ar/Final-Project--DAMG7370.git
+cd Final-Project--DAMG7370
 ```
 
-2. Download IMDb datasets
+2. Download the IMDb datasets
 ```bash
-# Download from IMDb Non-Commercial Datasets
 wget https://datasets.imdbws.com/name.basics.tsv.gz
 wget https://datasets.imdbws.com/title.basics.tsv.gz
-# ... download all 7 files
-```
-
-3. Extract the files
-```bash
+# ... repeat for all 7 files
 gunzip *.gz
 ```
 
-4. Set up Databricks environment
-   - Create Delta Live Tables pipeline
-   - Configure compute cluster
-   - Set up storage locations
+3. Set up the Databricks environment
+   - Create the Delta Live Tables pipeline
+   - Configure the compute cluster and storage locations
+   - Upload the source TSV files to the Bronze location
 
-5. Run the pipeline
-   - Execute Bronze layer notebooks
-   - Run Silver layer validations
-   - Process Gold layer transformations
+4. Run `Main_Pipeline.ipynb`
+   - Bronze ingestion → Silver validation → Gold transformation
 
-6. Connect Power BI to Databricks
-   - Configure Databricks connector
-   - Import data model
-   - Deploy dashboards
-
-## 📂 Project Structure
-
-```
-imdb-bi-project/
-├── README.md
-├── documentation/
-│   ├── Final_Mapping_Doc.xlsx
-│   ├── Data_Profiling_Report.pdf
-│   └── ER_Model.erwin
-├── databricks/
-│   ├── bronze/
-│   │   └── bronze_ingestion.py
-│   ├── silver/
-│   │   └── silver_validation.py
-│   └── gold/
-│       └── gold_transformation.py
-├── profiling/
-│   ├── alteryx/
-│   │   └── data_profiling_workflow.yxmd
-│   └── dqx/
-│       └── dqx_quality_reports/
-├── powerbi/
-│   └── IMDb_Analytics.pbix
-├── sql/
-│   ├── create_tables.sql
-│   └── business_queries.sql
-└── tests/
-    └── validation_tests.py
-```
+5. Connect Power BI to Databricks and build against the Gold layer
 
 ## 📋 Deliverables
 
@@ -250,21 +220,23 @@ imdb-bi-project/
 - [x] Source code in Git repository
 - [x] Validation and audit logs
 - [x] Power BI dashboards
-- [x] Project presentation (5 slides)
+- [x] Project presentation
 
-## 👥 Team Contributions
+## 👥 Team
 
-Document team member contributions here:
-- Member 1: Data modeling, Bronze layer implementation
-- Member 2: Silver layer validations, data quality
-- Member 3: Gold layer transformations, star schema
-- Member 4: Power BI dashboards, visualizations
+Four-person team project for DAMG 7370.
+
+**Arjun Loya** — ER/dimensional modeling and Bronze ingestion, Silver layer
+validation rules and data quality checks, Gold layer star schema
+transformations, and Power BI dashboards.
+
+Delivered collaboratively across data modeling, validation, dimensional
+modeling, and reporting.
 
 ## 📚 References
 
 - [IMDb Non-Commercial Datasets](https://developer.imdb.com/non-commercial-datasets/)
 - [ISO 639 Language Codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
-- [Country Codes for Movies](https://www.imdb.com/country/)
 - Databricks Medallion Architecture Best Practices
 - Power BI Best Practices for Large Datasets
 
@@ -276,9 +248,8 @@ This project uses IMDb's non-commercial datasets and is for educational purposes
 
 - DAMG 7370 Course Instructors and TAs
 - IMDb for providing non-commercial datasets
-- Databricks for Delta Live Tables platform
+- Databricks for the Delta Live Tables platform
 
 ---
 
-**Project Status:** ✅ Complete  
-**Last Updated:** December 2025
+**Status:** Complete — December 2025
