@@ -1,0 +1,4 @@
+* text=auto eol=lf
+*.xlsx binary
+*.DM1 binary
+*.yxmd text eol=lf

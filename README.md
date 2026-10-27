@@ -1,255 +1,259 @@
-# IMDb Data Analytics Platform — Business Intelligence Implementation
+# IMDb Analytics Platform
 
-End-to-end BI solution over IMDb's non-commercial datasets using medallion
-architecture. Processes **200.28M records across 7 source files** into a
-dimensional model serving movie and personnel analytics.
+**An end-to-end BI platform over IMDb's non-commercial datasets**, built on a Bronze → Silver → Gold medallion architecture in Databricks with Delta Live Tables. It processes **200.28M records from 7 source files** into a star schema for movie and personnel analytics, with **60 data-quality rules** enforced on every load.
 
-**Course:** DAMG 7370 — Designing Data Architecture for Business Intelligence,
-Northeastern University
+**Course:** DAMG 7370, Designing Data Architecture for Business Intelligence, Northeastern University (team project, December 2025)
 
-## 📊 Project Overview
+## Contents
 
-This project implements an end-to-end Business Intelligence solution for analyzing IMDb's non-commercial datasets using medallion architecture. The solution processes over 200 million records across 7 source files to create a comprehensive analytical platform for movie and personnel insights.
+- [Architecture](#architecture)
+- [Data sources](#data-sources)
+- [Data quality](#data-quality)
+- [Data model](#data-model)
+- [Business requirements](#business-requirements)
+- [Repository layout](#repository-layout)
+- [Running the pipeline](#running-the-pipeline)
+- [Team](#team)
 
-## 🎯 Business Objectives
-
-The platform enables business analysts to:
-- Analyze personnel professions and identify multi-talented individuals
-- Discover movies by genre and track release trends
-- Monitor movie lengths and ratings across years
-- Track regional and language distributions
-- Compare TV series performance with movies
-- Identify popular directors, writers, and actors
-
-## 🏗️ Architecture
-
-### Medallion Architecture Implementation
-```
-Bronze Layer (Raw) → Silver Layer (Validated) → Gold Layer (Curated)
-```
-
-- **Bronze Layer:** Raw data ingestion from TSV files (200.28M rows)
-- **Silver Layer:** Cleaned and validated data with 60 quality checks (200.28M rows, 0.0003% drop rate)
-- **Gold Layer:** Dimensional model with star schema (~235M rows across 12 tables)
-
-## 🛠️ Technology Stack
-
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| Data Modeling | ER Studio | Database design and schema modeling |
-| Data Profiling | Alteryx & DQX | Data quality analysis and profiling |
-| ETL Processing | Databricks | Data transformation and pipeline orchestration |
-| Storage | Delta Live Tables | Data lake storage with ACID compliance |
-| Visualization | Power BI | Interactive dashboards and reporting |
-| Version Control | Git | Code collaboration and versioning |
-
-## 📁 Data Sources
-
-| File | Description | Row Count | Key Columns |
-|------|-------------|-----------|-------------|
-| `name.basics.tsv` | Cast members and personnel details | 14,903,875 | nconst (PK), primaryName, primaryProfession |
-| `title.basics.tsv` | Movie/TV title details and genres | 12,095,664 | tconst (PK), titleType, primaryTitle, genres |
-| `title.akas.tsv` | Alternate titles in multiple languages | 54,124,127 | titleId+ordering (PK), title, region, language |
-| `title.crew.tsv` | Directors and writers for titles | 12,095,664 | tconst (PK), directors, writers |
-| `title.episode.tsv` | TV series episodes with season info | 9,324,110 | tconst (PK), parentTconst, seasonNumber |
-| `title.principals.tsv` | Principal cast/crew credits | 96,132,477 | tconst+ordering (PK), nconst, category |
-| `title.ratings.tsv` | Movie ratings and vote counts | 1,605,649 | tconst (PK), averageRating, numVotes |
-
-**Total Records:** 200,281,566
-
-## 🔄 Data Pipeline
-
-### 1. Data Profiling Phase
-- Analyze data distributions using Alteryx, DQX, and YData
-- Document data quality issues
-- Create comprehensive profiling reports
-- Generate data quality metrics
-
-### 2. Bronze Layer Processing
-- Raw TSV file ingestion
-- Source tracking metadata
-- No transformations applied
-- 100% data retention
-
-### 3. Silver Layer Processing
-- **60 validation rules** applied
-- Data type standardization
-- NULL value handling
-- Invalid date corrections
-- **Drop rate:** 646 rows (0.0003%)
-
-### 4. Gold Layer Processing
-- Star schema implementation
-- Dimension tables creation
-- Fact tables aggregation
-- Bridge tables for many-to-many relationships
-
-## 📊 Data Model
-
-### Fact Tables (3)
-- `fact_title_ratings` — 1.6M rows
-- `fact_episodes` — 9.3M rows
-- `fact_title_principals` — 96M rows
-
-### Dimension Tables (6)
-- `dim_title` — 12M rows
-- `dim_name` — 14.9M rows
-- `dim_genre` — 28 unique genres
-- `dim_profession` — 46 unique professions
-- `dim_region` — 252 unique regions
-- `dim_language` — 111 unique languages
-
-### Bridge Tables (3)
-- `bridge_title_genre` — 24M rows
-- `bridge_name_profession` — 35M rows
-- `bridge_title_akas` — 54M rows
-
-## ✅ Data Quality Standards
-
-### Validation Rules (60 total)
-- Primary key constraints
-- Date range validations (1800–2030)
-- NULL handling for required fields
-- Format standardization (e.g., `tt*` prefix for title IDs)
-- Cross-field validations
-- Domain-specific checks (e.g., valid title types)
-
-### Audit Columns (All Tables)
-- `DI_JOB_ID` — Job identifier for traceability
-- `DI_LOAD_DT` — Load timestamp
-- `_source_file` — Original source file reference
-
-### Quality Metrics
-- **Total validations:** 60 rules across the Silver layer
-- **Rows dropped:** 646 of 200,281,566 (0.0003%)
-- **Drop reasons:** Invalid dates, NULL primary keys, format violations
-
-## 📈 Business Analytics Capabilities
-
-### 15 Implemented Business Requirements
-
-1. Get different types of professions for any given personnel
-2. Generate report for personnel with multiple professions
-3. Get list of genres for a given title
-4. Identify list of movies based on given genre
-5. Find all movies released in a given year
-6. Track movie length metrics by release year
-7. List all adult and non-adult movies
-8. Generate all languages for a title
-9. Get list of regions for movie releases
-10. Get list of directors and writers for a movie
-11. Get episodes per season for a title
-12. Find all crew/cast types for a title
-13. Get list of jobs for a title
-14. Get list of characters for a title
-15. Find top-rated movies by year and genre
-
-## 📊 Power BI Dashboards
-
-Built against the Gold layer via the Databricks connector.
-
-1. **Movie Insights** — release trends by year, genre distribution, rating correlations
-2. **Crew Analytics** — actor performance, director and writer popularity, multi-profession analysis
-3. **Content Trends** — year-over-year comparisons, movie length analysis, adult vs non-adult
-4. **Regional Analysis** — country distribution, language diversity, regional release patterns
-5. **Series Insights** — season performance, episode count trends, series vs movie comparisons
-
-## 📂 Repository Contents
-
-This repository holds the profiling workflows, pipeline notebooks, mapping
-document, and data model. The Databricks Delta Live Tables pipelines and the
-Power BI report were developed in their respective workspaces and are not
-checked in here.
+## Architecture
 
 ```
-Final-Project--DAMG7370/
-├── README.md
-├── Main_Pipeline.ipynb            # Bronze → Silver → Gold transformations
-├── Data_Profiling_complete.ipynb  # Profiling and data quality analysis
-├── Final_Mapping_Doc.xlsx         # Source-to-target mapping specification
-├── final_project_team.DM1         # ER Studio data model
-└── Alteryx profiling workflows    # one per source file
-    ├── name_basic.yxmd
-    ├── title_akas.yxmd
-    ├── title_basics_.yxmd
-    ├── title_crew.yxmd
-    ├── title_episode.yxmd
-    ├── title_principle.yxmd
-    └── title_ratings.yxmd
+IMDb TSV files ──► Bronze (7 brz_* tables) ──► Silver (7 slv_* tables) ──► Gold (12 tables) ──► Power BI
+  200.28M rows       raw, as-is                 typed + 60 drop rules        star schema
 ```
 
-## 🚀 Getting Started
+| Layer | What happens | Code |
+|---|---|---|
+| **Profiling** | Each source file profiled for nulls, keys, formats and value domains (Alteryx workflows and a Databricks notebook) before any modelling | `profiling/` |
+| **Bronze** | Each TSV loaded as-is (header, tab separator) and tagged with `_source_file` | `pipeline/imdb_dlt_pipeline.ipynb` |
+| **Silver** | Types standardised and rules applied with `@dlt.expect_all_or_drop`. Adds `DI_JOB_ID` and `DI_LOAD_DT` audit columns | same notebook |
+| **Gold** | 6 dimensions, 3 facts and 3 bridge tables with surrogate keys. Audit columns carried through | same notebook |
+| **Reporting** | Power BI connected to the Gold layer through the Databricks connector | not in this repo |
 
-### Prerequisites
-- Databricks workspace access
-- Power BI Desktop/Pro
-- Alteryx Designer (to open the `.yxmd` profiling workflows)
-- ER Studio (to open `final_project_team.DM1`)
+| Component | Technology |
+|---|---|
+| Data modelling | ER Studio |
+| Data profiling | Alteryx, Databricks (PySpark) |
+| Pipeline framework | Delta Live Tables |
+| Storage | Delta Lake on Databricks |
+| Visualisation | Power BI |
 
-### Setup
+## Data sources
 
-1. Clone the repository
-```bash
-git clone https://github.com/Loya-ar/Final-Project--DAMG7370.git
-cd Final-Project--DAMG7370
+From [IMDb Non-Commercial Datasets](https://developer.imdb.com/non-commercial-datasets/). Row counts are from the profiling notebook.
+
+| File | Contents | Rows | Key |
+|---|---|---:|---|
+| `name.basics.tsv` | People: name, birth and death year, professions | 14,903,875 | `nconst` |
+| `title.basics.tsv` | Titles: type, names, years, runtime, genres | 12,095,664 | `tconst` |
+| `title.akas.tsv` | Alternate titles by region and language | 54,124,127 | `titleId` + `ordering` |
+| `title.crew.tsv` | Directors and writers per title | 12,095,664 | `tconst` |
+| `title.episode.tsv` | Episodes with parent series, season and episode number | 9,324,110 | `tconst` |
+| `title.principals.tsv` | Principal cast and crew credits | 96,132,477 | `tconst` + `ordering` |
+| `title.ratings.tsv` | Average rating and vote count | 1,605,649 | `tconst` |
+| **Total** | | **200,281,566** | |
+
+## Data quality
+
+The Silver layer enforces **60 rules** with `@dlt.expect_all_or_drop`. A row that fails any rule is dropped, and the pipeline's event log records how many rows each rule removed.
+
+| Rule type | Count | Examples |
+|---|---:|---|
+| Completeness | 28 | Primary keys and required fields not null or empty |
+| Format | 18 | IDs start with `nm` / `tt` and are 9–10 characters long |
+| Range | 9 | Birth and death year 1000–2025, ordering ≥ 1, season and episode ≥ 0, rating 1–10, at least 5 votes |
+| Domain | 3 | `titleType`, `category` and `isOriginalTitle` within their allowed values |
+| Cross-field | 2 | Death year not before birth year; an episode isn't its own parent |
+
+| Table | Rules |
+|---|---:|
+| `slv_name_basics` | 8 |
+| `slv_title_basics` | 7 |
+| `slv_title_akas` | 9 |
+| `slv_title_crew` | 4 |
+| `slv_title_episode` | 11 |
+| `slv_title_principals` | 12 |
+| `slv_title_ratings` | 9 |
+
+In the team's run, the rules dropped **646 of 200,281,566 rows (0.0003%)**, mainly for invalid dates, null keys and format violations.
+
+**Audit columns:** Bronze tables carry `_source_file`. Silver and Gold tables carry `DI_JOB_ID` (the load step) and `DI_LOAD_DT` (the load timestamp).
+
+## Data model
+
+The Gold layer is a star schema: 3 facts, 6 dimensions and 3 bridge tables for the many-to-many relationships. Every table has a surrogate key, and the natural IMDb IDs (`Tconst`, `Nconst`) are kept for lineage.
+
+```mermaid
+erDiagram
+    dim_title ||--o| fact_title_ratings : "rated"
+    dim_title ||--o{ fact_title_principals : "credits"
+    dim_name ||--o{ fact_title_principals : "credited in"
+    dim_title ||--o{ fact_episodes : "episode / parent series"
+    dim_title ||--o{ bridge_title_genre : "has"
+    dim_genre ||--o{ bridge_title_genre : "has"
+    dim_name ||--o{ bridge_name_profession : "has"
+    dim_profession ||--o{ bridge_name_profession : "has"
+    dim_title ||--o{ bridge_title_akas : "has"
+    dim_region ||--o{ bridge_title_akas : "has"
+    dim_language ||--o{ bridge_title_akas : "has"
+
+    dim_title {
+        bigint TitleKey PK
+        string Tconst
+        string TitleType
+        string PrimaryTitle
+        string OriginalTitle
+        int IsAdult
+        int StartYear
+        int EndYear
+        int RuntimeMinutes
+    }
+    dim_name {
+        bigint NameKey PK
+        string Nconst
+        string PrimaryName
+        int BirthYear
+        int DeathYear
+    }
+    dim_genre {
+        bigint GenreKey PK
+        string GenreName
+    }
+    dim_profession {
+        bigint ProfessionKey PK
+        string ProfessionName
+    }
+    dim_region {
+        bigint RegionKey PK
+        string RegionCode
+        string RegionName
+    }
+    dim_language {
+        bigint LanguageKey PK
+        string LanguageCode
+        string LanguageName
+    }
+    fact_title_ratings {
+        bigint RatingKey PK
+        bigint TitleKey FK
+        double AverageRating
+        int NumVotes
+    }
+    fact_episodes {
+        bigint EpisodeKey PK
+        bigint EpisodeTitleKey FK
+        bigint ParentTitleKey FK
+        int SeasonNumber
+        int EpisodeNumber
+    }
+    fact_title_principals {
+        bigint PrincipalKey PK
+        bigint TitleKey FK
+        bigint NameKey FK
+        int Ordering
+        string Category
+        string Job
+        string Characters
+    }
+    bridge_title_genre {
+        bigint TitleGenreKey PK
+        bigint TitleKey FK
+        bigint GenreKey FK
+    }
+    bridge_name_profession {
+        bigint NameProfessionKey PK
+        bigint NameKey FK
+        bigint ProfessionKey FK
+    }
+    bridge_title_akas {
+        bigint TitleAkaKey PK
+        bigint TitleKey FK
+        bigint RegionKey FK
+        bigint LanguageKey FK
+        string AkaTitle
+        int Ordering
+    }
 ```
 
-2. Download the IMDb datasets
-```bash
-wget https://datasets.imdbws.com/name.basics.tsv.gz
-wget https://datasets.imdbws.com/title.basics.tsv.gz
-# ... repeat for all 7 files
-gunzip *.gz
+Row counts from the team's run:
+
+| Table | Rows | | Table | Rows |
+|---|---:|---|---|---:|
+| `fact_title_principals` | 96M | | `dim_name` | 14.9M |
+| `fact_episodes` | 9.3M | | `dim_title` | 12M |
+| `fact_title_ratings` | 1.6M | | `dim_region` | 252 |
+| `bridge_title_akas` | 54M | | `dim_language` | 111 |
+| `bridge_name_profession` | 35M | | `dim_profession` | 46 |
+| `bridge_title_genre` | 24M | | `dim_genre` | 28 |
+
+The full source-to-target mapping is in [`design/source_to_target_mapping.xlsx`](design/source_to_target_mapping.xlsx), and the ER Studio model is [`design/imdb_data_model.DM1`](design/imdb_data_model.DM1).
+
+## Business requirements
+
+The Gold layer was designed to answer 15 analyst questions:
+
+1. Professions for a given person
+2. People with multiple professions
+3. Genres for a given title
+4. Movies in a given genre
+5. Movies released in a given year
+6. Movie length by release year
+7. Adult and non-adult movies
+8. Languages for a title
+9. Release regions for a movie
+10. Directors and writers for a movie
+11. Episodes per season for a series
+12. Cast and crew types for a title
+13. Jobs for a title
+14. Characters for a title
+15. Top-rated movies by year and genre
+
+The team built five Power BI dashboards on top of the Gold layer: Movie Insights, Crew Analytics, Content Trends, Regional Analysis and Series Insights. The Power BI report isn't included in this repo.
+
+## Repository layout
+
+```
+imdb-analytics-platform/
+├── pipeline/
+│   └── imdb_dlt_pipeline.ipynb       # Delta Live Tables source: Bronze, Silver, Gold
+├── profiling/
+│   ├── data_profiling.ipynb          # Databricks profiling of all 7 files (outputs saved)
+│   └── alteryx/                      # One Alteryx profiling workflow per source file
+│       ├── name_basics.yxmd
+│       ├── title_akas.yxmd
+│       ├── title_basics.yxmd
+│       ├── title_crew.yxmd
+│       ├── title_episode.yxmd
+│       ├── title_principals.yxmd
+│       └── title_ratings.yxmd
+└── design/
+    ├── source_to_target_mapping.xlsx # Column-level mapping, source to Gold
+    └── imdb_data_model.DM1           # ER Studio data model
 ```
 
-3. Set up the Databricks environment
-   - Create the Delta Live Tables pipeline
-   - Configure the compute cluster and storage locations
-   - Upload the source TSV files to the Bronze location
+## Running the pipeline
 
-4. Run `Main_Pipeline.ipynb`
-   - Bronze ingestion → Silver validation → Gold transformation
+You need a Databricks workspace with Unity Catalog, plus Power BI Desktop for reporting.
 
-5. Connect Power BI to Databricks and build against the Gold layer
+1. **Download the source files** and unzip them:
+   ```bash
+   for f in name.basics title.basics title.akas title.crew title.episode title.principals title.ratings; do
+     curl -O https://datasets.imdbws.com/$f.tsv.gz
+   done
+   gunzip *.tsv.gz
+   ```
+2. **Upload the seven `.tsv` files** to the Unity Catalog volume `/Volumes/workspace/imdb_dw/data`, or change `DATA_PATH` at the top of the pipeline notebook.
+3. **Import `pipeline/imdb_dlt_pipeline.ipynb`** into the workspace.
+4. **Create a Delta Live Tables pipeline** (Workflows → Pipelines) with this notebook as its source and a target catalog and schema for the tables.
+5. **Start the pipeline.** DLT builds the 26 tables in dependency order, and the pipeline UI shows each data-quality rule's pass and drop counts.
+6. **Connect Power BI** to the target schema through the Databricks connector and build on the Gold tables.
 
-## 📋 Deliverables
+`profiling/data_profiling.ipynb` runs as an ordinary notebook against the same files. The Alteryx workflows open in Alteryx Designer.
 
-- [x] Complete mapping document with source-to-target mappings
-- [x] Data profiling analysis reports
-- [x] ER model and schema design files
-- [x] Source code in Git repository
-- [x] Validation and audit logs
-- [x] Power BI dashboards
-- [x] Project presentation
+## Team
 
-## 👥 Team
+Four-person team project for DAMG 7370. This repository keeps the commit history from the team's original repo.
 
-Four-person team project for DAMG 7370.
+**Arjun Loya:** ER and dimensional modelling, Bronze ingestion, Silver-layer validation rules and data-quality checks, Gold-layer star-schema transformations, and Power BI dashboards.
 
-**Arjun Loya** — ER/dimensional modeling and Bronze ingestion, Silver layer
-validation rules and data quality checks, Gold layer star schema
-transformations, and Power BI dashboards.
-
-Delivered collaboratively across data modeling, validation, dimensional
-modeling, and reporting.
-
-## 📚 References
-
-- [IMDb Non-Commercial Datasets](https://developer.imdb.com/non-commercial-datasets/)
-- [ISO 639 Language Codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
-- Databricks Medallion Architecture Best Practices
-- Power BI Best Practices for Large Datasets
-
-## 📝 License
-
-This project uses IMDb's non-commercial datasets and is for educational purposes only.
-
-## 🤝 Acknowledgments
-
-- DAMG 7370 Course Instructors and TAs
-- IMDb for providing non-commercial datasets
-- Databricks for the Delta Live Tables platform
-
----
-
-**Status:** Complete — December 2025
+IMDb data is used under IMDb's [non-commercial licence](https://developer.imdb.com/non-commercial-datasets/), for educational purposes only.

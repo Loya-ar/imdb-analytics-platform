@@ -1,0 +1,9 @@
+# Data files (download from IMDb)
+*.tsv
+*.tsv.gz
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.ipynb_checkpoints/
